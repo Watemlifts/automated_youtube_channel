@@ -1,0 +1,89 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "watemyoumaster" ]
+  pull_request:
+    branches: [ "watemyoumaster" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        pytest
+
+            - name: Download a Build Artifact
+  uses: actions/download-artifact@v4.1.8
+  with:
+    # Name of the artifact to download. If unspecified, all artifacts for the run are downloaded.
+    name: # optional
+    # Destination path. Supports basic tilde expansion. Defaults to $GITHUB_WORKSPACE
+    path: # optional
+    # A glob pattern matching the artifacts that should be downloaded. Ignored if name is specified.
+    pattern: # optional
+    # When multiple artifacts are matched, this changes the behavior of the destination directories. If true, the downloaded artifacts will be in the same directory specified by path. If false, the downloaded artifacts will be extracted into individual named directories within the specified path.
+    merge-multiple: # optional, default is false
+    # The GitHub token used to authenticate with the GitHub API. This is required when downloading artifacts from a different repository or from a different workflow run. If this is not specified, the action will attempt to download artifacts from the current repository and the current workflow run.
+    github-token: # optional
+    # The repository owner and the repository name joined together by "/". If github-token is specified, this is the repository that artifacts will be downloaded from.
+    repository: # optional, default is ${{ github.repository }}
+    # The id of the workflow run where the desired download artifact was uploaded from. If github-token is specified, this is the run that artifacts will be downloaded from.
+    run-id: # optional, default is ${{ github.run_id }}
+
+             - name: Deploy to Algorithmia
+  # You may pin to the exact commit or the version.
+  # uses: algorithmiaio/algorithmia-modeldeployment-action@14310c6bd07101452e0a1bc435aa2e306e62aa30
+  uses: algorithmiaio/algorithmia-modeldeployment-action@1.1.0
+  with:
+    # Algorithmia API Key, used when uploading the model file
+    algorithmia_api_key: 
+    # Algorithmia Username, used as Git Commit Username and as part of default model upload path
+    algorithmia_username: 
+    # Algorithmia Email, used as Git Commit Email
+    algorithmia_email: # optional, default is githubactions@placeholder.email
+    # Algorithmia Password. Only required if the algorithm is hosted on Algorithmia.
+    algorithmia_password: # optional
+    # Github username owning the algorithm repository, used to clone the algorithm repository. Only required if the algorithm is hosted on Github.
+    github_username: # optional
+    # Github Personal Access Token, used to clone the algorithm repository. Only required if the algorithm is hosted on Github.
+    github_pat: # optional
+    # Algorithmia Algorithm name
+    algorithmia_algoname: 
+    # Algorithmia data collection name to upload the model file
+    algorithmia_uploadpath: # default is data://$ALGORITHMIA_USERNAME/$ALGORITHMIA_ALGONAME
+    # Path of the model file to be uploaded to Algorithmia
+    model_path: # default is model.pkl
+    # Path of the notebook to be executed by this action
+    notebook_path: # optional, default is model_training.ipynb
+    # Git host for the Algorithmia algorithm repository. Change to git.algorithmia.com if the algorithm is hosted on Algorithmia Marketplace or git.YOUR_DOMAIN for enterprise installations.
+    git_host: # optional, default is github.com
+    # API endpoint Algorithmia installation, for enterprise customers.
+    algorithmia_api: # optional, default is https://api.algorithmia.com
+                   
