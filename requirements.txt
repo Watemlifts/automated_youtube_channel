@@ -3,6 +3,6 @@ google_auth_oauthlib==0.4.2
 instaloader==4.5.5
 instalooter==2.4.4
 moviepy==1.0.3
-protobuf==3.14.0
+protobuf==4.25.8
 python_dateutil==2.8.1
 schedule==0.6.0
